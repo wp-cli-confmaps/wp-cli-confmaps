@@ -6,7 +6,7 @@ This is a [CLI](https://wp-cli.org/)-based tool for managing
 database table.
 
 TL;DR this:
-- This plugin manages WP options in your `wp_options` table
+- This WP-CLI package manages WP options in your `wp_options` table
 - Options' values are defined in PHP files
 - Per-environment definitions are supported
 - Definitions from multiple files files can be merged before applying the resulting configuration to the `wp_options` table
@@ -20,24 +20,19 @@ In short, if your answer to the question "Do I want to track my WordPress config
 
 Prerequisites:
 - [WordPress](https://wordpress.org/)
-- [WP-CLI](https://wp-cli.org/) plugin
+- [WP-CLI](https://wp-cli.org/)
 - Shell access to your WP instance(s)
 
-Once this plugin is published in the [WordPress' plugin directory](https://wordpress.org/plugins/):
+Install the `wp-cli-configmaps` package:
 ```
-wp plugin install wp-cli-configmaps
-```
-
-But until then:
-```
-git clone git@github.com:wp-cli-configmaps/wp-cli-configmaps wp-content/plugins/wp-cli-configmaps
+wp package install wp-cli-configmaps/wp-cli-configmaps
 ```
 
 
 
-## Initial usage
+## Configuration
 
-To start using this plugin, at least one config map needs to be created.
+To start using this tool, at least one config map needs to be created.
 The simplest way to get started is to generate a config map from your current `wp_options` content:
 ```
 wp configmaps generate --from-db

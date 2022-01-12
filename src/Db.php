@@ -19,11 +19,8 @@
 
 namespace WP\CLI\ConfigMaps;
 
-if (!defined('ABSPATH')) {
-    throw new Exception('Direct calling of this file is not supported: ' . __FILE__);
-}
 if (!defined('WP_CLI')) {
-    throw new Exception('WP CLI plugin is required by: ' . __FILE__);
+    throw new Exception("Cannot run outside WP-CLI context");
 }
 
 class Db

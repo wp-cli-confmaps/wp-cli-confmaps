@@ -1,16 +1,4 @@
 <?php
-/**
- * Plugin Name:       ConfigMaps for WP-CLI
- * Plugin URI:        https://github.com/wp-cli-configmaps/wp-cli-configmaps
- * Description:       Configuration management for your wp_options table
- * Version:           1.0.0
- * Requires at least: 5.8
- * Requires PHP:      7.4
- * Author:            Bostjan Skufca Jese
- * Author URI:        https://github.com/bostjan
- * License:           GPLv2
- * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- */
 /*
  * ConfigMaps for WP-CLI - Configuration management for your wp_options table
  *
@@ -29,36 +17,7 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
  */
 
-/*
- * Ensure basic environment sanity
- */
-if (!defined('ABSPATH')) {
-    throw new Exception('Direct calling of this file is not supported: ' . __FILE__);
+if (!defined('WP_CLI')) {
+    throw new Exception("Cannot run outside WP-CLI context");
 }
-
-/*
- * Plugin initialization method
- */
-function wp_cli_configmaps_plugin_init ()
-{
-    if (is_multisite()) {
-        throw new Exception("Multisite installs are currently not (yet) supported by the wp-cli-configmaps plugin.");
-    }
-
-    if (defined('WP_CLI_CONFIGMAPS')) {
-        $configMaps = WP_CLI_CONFIGMAPS;
-    } else {
-        $configMaps = [];
-    }
-
-    // Init the plugin
-    require_once __DIR__ . "/src/Core.php";
-    \WP\CLI\ConfigMaps\Core::init($configMaps);
-}
-
-/*
- * Register the initialization method, but only in the CLI context
- */
-if (defined('WP_CLI')) {
-    add_action( 'init', 'wp_cli_configmaps_plugin_init');
-}
+WP_CLI::add_command('configmaps', '\\WP\\CLI\\ConfigMaps\\Commands');

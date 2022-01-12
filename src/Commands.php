@@ -23,11 +23,8 @@ use WP\CLI\ConfigMaps\ConfigMapService;
 use WP_CLI;
 use WP_CLI_Command;
 
-if (!defined('ABSPATH')) {
-    throw new Exception('Direct calling of this file is not supported: ' . __FILE__);
-}
 if (!defined('WP_CLI')) {
-    throw new Exception('WP CLI plugin is required by: ' . __FILE__);
+    throw new Exception("Cannot run outside WP-CLI context");
 }
 
 /**
@@ -39,8 +36,20 @@ class Commands extends WP_CLI_Command
     public function __construct()
     {
         parent::__construct();
+
+        if (is_multisite()) {
+            throw new Exception("Multisite installs are currently not (yet) supported by wp-cli-configmaps");
+        }
+
+        if (defined('WP_CLI_CONFIGMAPS')) {
+            $configMaps = WP_CLI_CONFIGMAPS;
+        } else {
+            $configMaps = [];
+        }
+        ConfigMapService::setCustomMaps($configMaps);
+
         if (ConfigMapService::getMapCount() == 0) {
-            WP_CLI::warning("(from wp-cli-configmaps plugin): There are no config maps defined. Here are the steps to get you started:
+            WP_CLI::warning("There are no config maps defined. Here are the steps to get you started:
 
 1. Generate your first config map:
 
