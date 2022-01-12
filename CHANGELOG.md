@@ -2,7 +2,7 @@
 
 
 
-## 2022-xx-xx - Release 1.0.x
+## 2022-01-12 - Release 1.0.1
 
 Bugs fixed:
 - Add missing handling for `optionSpec['undef-key-action-dump'] == 'add'` definition
