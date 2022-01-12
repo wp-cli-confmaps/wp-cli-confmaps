@@ -6,6 +6,7 @@
 
 Bugs fixed:
 - Add missing handling for `optionSpec['undef-key-action-dump'] == 'add'` definition
+- Remove redundant `'action' => 'walk'` from minimized config maps (it's the default action)
 
 
 

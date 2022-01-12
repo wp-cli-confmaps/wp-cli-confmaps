@@ -323,6 +323,7 @@ class ConfigMapService
 
                         if ($optionSpec['action'] == 'walk') {
                             $optionSpec['value'] = self::minimizeMap($optionSpec['value']);
+                            unset($optionSpec['action']);
                         }
 
                     } elseif ($optionSpec['action-apply'] == 'walk') {
