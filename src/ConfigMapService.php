@@ -282,6 +282,14 @@ class ConfigMapService
                 'value'        => $optionValue,
             ];
 
+        } elseif (is_null($optionValue)) {
+            $optionSpec = [
+                'type'         => 'null',
+                'action-apply' => 'copy-as-is',
+                'action-dump'  => 'copy-as-is',
+                'value'        => NULL,
+            ];
+
         } else {
             throw new Exception("Unsupported data type (2): ". gettype($optionValue) .", value=". $optionValue);
         }
@@ -298,6 +306,7 @@ class ConfigMapService
 
         foreach ($fullConfigMap as $optionName => $optionSpec) {
             switch ($optionSpec['type']) {
+                case 'null':
                 case 'string':
                 case 'int':
                 case 'bool':
@@ -365,6 +374,7 @@ class ConfigMapService
             if (is_array($minimumOptionSpec)) {
                 $optionSpec = $minimumOptionSpec;
                 switch ($optionSpec['type']) {
+                    case 'null':
                     case 'string':
                     case 'int':
                     case 'bool':
@@ -426,6 +436,14 @@ class ConfigMapService
                     'value'        => $minimumOptionSpec,
                 ];
 
+            } elseif (is_null($minimumOptionSpec)) {
+                $optionSpec = [
+                    'type'         => 'null',
+                    'action-apply' => 'copy-as-is',
+                    'action-dump'  => 'copy-as-is',
+                    'value'        => NULL,
+                ];
+
             } else {
                 throw new Exception("Unsupported data type (3) for '$optionName': ". gettype($minimumOptionSpec) .", value/minOptionSpec=". $minimumOptionSpec);
             }
@@ -466,6 +484,7 @@ class ConfigMapService
 
         foreach ($secondMap as $optionName => $optionSpec) {
             switch ($optionSpec['type']) {
+                case 'null':
                 case 'string':
                 case 'int':
                 case 'bool':
@@ -692,6 +711,7 @@ class ConfigMapService
         // Convert back to usual types
         foreach ($configMap as $optionName => $optionSpec) {
             switch ($optionSpec['type']) {
+                case 'null':
                 case 'string':
                 case 'int':
                 case 'bool':
@@ -748,6 +768,7 @@ class ConfigMapService
                 continue;
             }
             switch ($optionSpec['type']) {
+                case 'null':
                 case 'string':
                 case 'int':
                 case 'bool':
