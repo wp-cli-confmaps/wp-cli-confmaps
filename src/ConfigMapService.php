@@ -228,12 +228,21 @@ class ConfigMapService
         }
 
         if ($manualFixups) {
-            $configMap['recently_activated']['action-apply'] = 'ignore';
-            $configMap['recently_activated']['action-dump']  = 'ignore';
-            $configMap['recently_activated']['value']        = NULL;
-            $configMap['uninstall_plugins']['action-apply']  = 'ignore';
-            $configMap['uninstall_plugins']['action-dump']   = 'ignore';
-            $configMap['uninstall_plugins']['value']         = NULL;
+            $configMap['can_compress_scripts']['action-apply']           = 'ignore';
+            $configMap['can_compress_scripts']['action-dump']            = 'ignore';
+            $configMap['can_compress_scripts']['value']                  = NULL;
+            $configMap['finished_updating_comment_type']['action-apply'] = 'ignore';
+            $configMap['finished_updating_comment_type']['action-dump']  = 'ignore';
+            $configMap['finished_updating_comment_type']['value']        = NULL;
+            $configMap['recently_activated']['action-apply']             = 'ignore';
+            $configMap['recently_activated']['action-dump']              = 'ignore';
+            $configMap['recently_activated']['value']                    = NULL;
+            $configMap['recently_edited']['action-apply']                = 'ignore';
+            $configMap['recently_edited']['action-dump']                 = 'ignore';
+            $configMap['recently_edited']['value']                       = NULL;
+            $configMap['uninstall_plugins']['action-apply']              = 'ignore';
+            $configMap['uninstall_plugins']['action-dump']               = 'ignore';
+            $configMap['uninstall_plugins']['value']                     = NULL;
         }
 
         return $configMap;
