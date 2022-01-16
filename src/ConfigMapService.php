@@ -807,7 +807,7 @@ class ConfigMapService
             }
         }
 
-        if ($undefKeyAction == 'add') {
+        if ($undefKeyAction == 'add' && !is_null($newValueMap)) {
             foreach ($newValueMap as $optionName => $optionSpec) {
                 if (!isset($configMap[$optionName])) {
                     $updatedConfigMap[$optionName] = $optionSpec;
