@@ -2,6 +2,13 @@
 
 
 
+## 2022-xx-xx - Release 1.0.x
+
+Bugs fixed:
+- Fix missing encoding for newly created options (defined in maps, completely absent from `wp_options`)
+
+
+
 ## 2022-01-16 - Release 1.0.3
 
 Improvements:
