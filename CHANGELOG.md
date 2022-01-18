@@ -1,4 +1,4 @@
-# Changelog - ConfigMaps for WordPress WP-CLI
+# Changelog - ConfigMaps configuration management for WordPress WP-CLI
 
 
 
