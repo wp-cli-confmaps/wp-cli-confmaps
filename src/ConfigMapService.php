@@ -21,15 +21,18 @@ namespace WP\CLI\ConfigMaps;
 
 use WP_CLI;
 
-if (!defined('WP_CLI')) {
-    throw new Exception("Cannot run outside WP-CLI context");
-}
-
 class ConfigMapService
 {
     const CONFIG_MAP_SUPPORTED_VERSION_MIN = 1;
     const CONFIG_MAP_SUPPORTED_VERSION_MAX = 1;
 
+    /**
+     * An index of config maps:
+     * - array key is the ID of the map
+     * - array values:
+     *   - `file` is the path to the map file (a PHP file returning a config map as an array)
+     *   - `map` is the actual config map (as an alternative, when maps are not provided as files)
+     */
     public static $configMapIndex = [];
 
     /**
@@ -37,10 +40,18 @@ class ConfigMapService
      */
     public static function setCustomMaps ($configMaps)
     {
-        foreach ($configMaps as $mapId => $mapFile) {
-            self::$configMapIndex[$mapId] = [
-                'file' => $mapFile,
-            ];
+        foreach ($configMaps as $mapId => $mapFileOrContent) {
+            if (is_string($mapFileOrContent)) {
+                self::$configMapIndex[$mapId] = [
+                    'file' => $mapFileOrContent,
+                ];
+            } elseif (is_array($mapFileOrContent)) {
+                self::$configMapIndex[$mapId] = [
+                    'map' => $mapFileOrContent,
+                ];
+            } else {
+                throw new Exception("Unsupported map specification for map '$mapId'");
+            }
         }
     }
 
@@ -94,11 +105,16 @@ class ConfigMapService
      */
     public static function getMap ($mapId, $undefKeyActionDump)
     {
-        $mapFile = self::getMapFile($mapId);
-        if (!is_file($mapFile) || !is_readable($mapFile)) {
-            throw new Exception("Config map file '$mapFile' for config map ID '$mapId' does not exist or it is not readable");
+        if (isset(self::$configMapIndex[$mapId]['file'])) {
+            $mapFile = self::$configMapIndex[$mapId]['file'];
+            if (!is_file($mapFile) || !is_readable($mapFile)) {
+                throw new Exception("Config map file '$mapFile' for config map ID '$mapId' does not exist or it is not readable");
+            }
+            $configMapContainer = require $mapFile;
+        } else {
+            $configMapContainer = self::$configMapIndex[$mapId]['map'];
         }
-        $configMapContainer = require $mapFile;
+
         if ($configMapContainer === 1) {
             throw new Exception("Reading the file for config map ID '$mapId' did not yield any content. Perhaps the config map is missing the `return` statement?");
         }
