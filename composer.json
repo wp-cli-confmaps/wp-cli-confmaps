@@ -1,8 +1,8 @@
 {
-    "name": "wp-cli-configmaps/wp-cli-configmaps",
+    "name": "wp-cli-confmaps/wp-cli-confmaps",
     "type": "wp-cli-package",
-    "description": "ConfigMaps configuration management for WordPress - Tame your wp_options using WP-CLI and git",
-    "homepage": "https://github.com/wp-cli-configmaps/wp-cli-configmaps",
+    "description": "ConfMaps configuration management for WordPress - Tame your wp_options using WP-CLI and git",
+    "homepage": "https://github.com/wp-cli-confmaps/wp-cli-confmaps",
     "license": "GPL-2.0-only",
     "keywords": [
         "wp_options",
@@ -28,13 +28,13 @@
     },
     "autoload": {
         "psr-4": {
-            "WP\\CLI\\ConfigMaps\\": "src/"
+            "WP\\CLI\\ConfMaps\\": "src/"
         },
         "files": [
-            "wp-cli-configmaps.php"
+            "wp-cli-confmaps.php"
         ]
     },
     "support": {
-        "issues": "https://github.com/wp-cli-configmaps/wp-cli-configmaps/issues"
+        "issues": "https://github.com/wp-cli-confmaps/wp-cli-confmaps/issues"
     }
 }

@@ -1,4 +1,10 @@
-# Changelog - ConfigMaps configuration management for WordPress WP-CLI
+# Changelog - ConfMaps configuration management for WordPress WP-CLI
+
+
+
+## 2022-10-29 - Release 1.0.5
+
+Project renamed to `wp-cli-confmaps`.
 
 
 
@@ -31,7 +37,7 @@ Bugs fixed:
 
 Bugs fixed:
 - Add missing handling for `optionSpec['undef-key-action-dump'] == 'add'` definition
-- Remove redundant `'action' => 'walk'` from minimized config maps (it's the default action)
+- Remove redundant `'action' => 'walk'` from minimized conf maps (it's the default action)
 
 
 

@@ -1,6 +1,6 @@
 <?php
 /*
- * ConfigMaps configuration management for WordPress WP-CLI - Tame your wp_options using WP-CLI and git
+ * ConfMaps configuration management for WordPress WP-CLI - Tame your wp_options using WP-CLI and git
  *
  * Copyright (C) 2022 Bostjan Skufca Jese
  *
@@ -17,9 +17,9 @@
  * along with this program; if not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
  */
 
-namespace WP\CLI\ConfigMaps;
+namespace WP\CLI\ConfMaps;
 
-use WP\CLI\ConfigMaps\ConfigMapService;
+use WP\CLI\ConfMaps\ConfMapService;
 use WP_CLI;
 use WP_CLI_Command;
 
@@ -38,69 +38,69 @@ class Commands extends WP_CLI_Command
         parent::__construct();
 
         if (is_multisite()) {
-            throw new Exception("Multisite installs are currently not (yet) supported by wp-cli-configmaps");
+            throw new Exception("Multisite installs are currently not (yet) supported by wp-cli-confmaps");
         }
 
-        if (defined('WP_CLI_CONFIGMAPS')) {
-            $configMaps = WP_CLI_CONFIGMAPS;
+        if (defined('WP_CLI_CONFMAPS')) {
+            $confMaps = WP_CLI_CONFMAPS;
         } else {
-            $configMaps = [];
+            $confMaps = [];
         }
-        ConfigMapService::setCustomMaps($configMaps);
+        ConfMapService::setCustomMaps($confMaps);
 
-        if (ConfigMapService::getMapCount() == 0) {
-            WP_CLI::warning("There are no config maps defined. Here are the steps to get you started:
+        if (ConfMapService::getMapCount() == 0) {
+            WP_CLI::warning("There are no conf maps defined. Here are the steps to get you started:
 
-1. Generate your first config map:
+1. Generate your first conf map:
 
-    wp configmaps generate --from-db --output=config-map-common.php
+    wp confmaps generate --from-db --output=conf-map-common.php
 
-2. Configure a config map set in your wp-config.php:
+2. Configure a conf map set in your wp-config.php:
 
-    define('WP_CLI_CONFIGMAPS', [
-        'common' => ABSPATH . 'config-map-common.php',
-    //  WP_ENV   => ABSPATH . 'config-map-' . WP_ENV . '.php',   // This one is for later, when you'll have a per-environment config map overlays
+    define('WP_CLI_CONFMAPS', [
+        'common' => ABSPATH . 'conf-map-common.php',
+    //  WP_ENV   => ABSPATH . 'conf-map-' . WP_ENV . '.php',   // This one is for later, when you'll have a per-environment conf map overlays
     ]);
 
-3. Verify/apply your config map(s) to the database:
+3. Verify/apply your conf map(s) to the database:
 
-    wp configmaps apply --dry-run
+    wp confmaps apply --dry-run
 
-4. Update your config maps with new options (or update with fresh option values) from the wp_options database:
+4. Update your conf maps with new options (or update with fresh option values) from the wp_options database:
 
-    wp configmaps update
+    wp confmaps update
 
-More information is available at https://github.com/wp-cli-configmaps/wp-cli-configmaps.
+More information is available at https://github.com/wp-cli-confmaps/wp-cli-confmaps.
 
 ");
         }
     }
 
     /**
-     * Generate a config map content (in a form of PHP code)
+     * Generate a conf map content (in a form of PHP code)
      *
      * ## OPTIONS
      *
      * [--from-db]
-     * : Generate an initial config map from your current wp_options content (default, alternative to --from-map=MAP-ID)
+     * : Generate an initial conf map from your current wp_options content (default, alternative to --from-map=MAP-ID)
      *
      * [--from-map=<map-id>]
-     * : Use existing config map as a template
+     * : Use existing conf map as a template
      *
      * [--values-from-db]
-     * : For settings defined in the generated config map, pull the values from the database (default)
+     * : For settings defined in the generated conf map, pull the values from the database (default)
      *
      * [--values-from-map=<map-id>]
-     * : For settings defined in the generated map, pull the values from another config map
+     * : For settings defined in the generated map, pull the values from another conf map
      *
      * [--output=FILE]
      * : Send the output to a FILE (default: STDOUT)
      *
      * ## EXAMPLES
      *
-     * wp configmaps generate
-     * wp configmaps generate --from-db --values-from-db   # The default
-     * wp configmaps generate --from-map=dev --values-from-db --output=conf/map/stg.php   # One way to generate a new environment-specific map
+     * wp confmaps generate
+     * wp confmaps generate --from-db --values-from-db   # The default
+     * wp confmaps generate --from-map=dev --values-from-db --output=conf/map/stg.php   # One way to generate a new environment-specific map
      *
      * @synopsis [--from-db] [--from-map=<map-id>] [--values-from-db] [--values-from-map=<map-id>] [--output=<FILE>]
      */
@@ -110,50 +110,50 @@ More information is available at https://github.com/wp-cli-configmaps/wp-cli-con
 
         // Template
         if (isset($assocArgs['from-map'])) {
-            $templateConfigMapId = $assocArgs['from-map'];
-            if (!ConfigMapService::doesMapIdExist($templateConfigMapId)) {
-                WP_CLI::error("Config map with id '$templateConfigMapId' is not defined (hint: `wp configmaps list` to see all defined config maps)");
+            $templateConfMapId = $assocArgs['from-map'];
+            if (!ConfMapService::doesMapIdExist($templateConfMapId)) {
+                WP_CLI::error("Conf map with id '$templateConfMapId' is not defined (hint: `wp confmaps list` to see all defined conf maps)");
             }
-            $templateConfigMap = ConfigMapService::getMap($templateConfigMapId);
+            $templateConfMap = ConfMapService::getMap($templateConfMapId);
 
-            $cmdArgs .= " --from-map=" . $templateConfigMapId;
+            $cmdArgs .= " --from-map=" . $templateConfMapId;
         } else {
-            $templateConfigMap = ConfigMapService::generateMapFromWpOptions();
+            $templateConfMap = ConfMapService::generateMapFromWpOptions();
             $cmdArgs .= " --from-db";
         }
 
         // Values
         if (isset($assocArgs['values-from-map'])) {
             $valueMapId = $assocArgs['values-from-map'];
-            if (!ConfigMapService::doesMapIdExist($valueMapId)) {
-                WP_CLI::error("Config map with id '$mapId' is not defined (hint: `wp configmaps list` to see all defined config maps)");
+            if (!ConfMapService::doesMapIdExist($valueMapId)) {
+                WP_CLI::error("Conf map with id '$mapId' is not defined (hint: `wp confmaps list` to see all defined conf maps)");
             }
-            $valueMap = ConfigMapService::getMap($valueMapId);
+            $valueMap = ConfMapService::getMap($valueMapId);
             $cmdArgs .= " --values-from-map=" . $valueMapId;
         } else {
-            $valueMap = ConfigMapService::generateMapFromWpOptions();
+            $valueMap = ConfMapService::generateMapFromWpOptions();
             $cmdArgs .= " --values-from-db";
         }
 
         // Merge values into the template map
-        $newConfigMap = ConfigMapService::updateMapValues($templateConfigMap, $valueMap, 'add');
+        $newConfMap = ConfMapService::updateMapValues($templateConfMap, $valueMap, 'add');
 
         // Generate PHP code
-        $header = "// Generated by `wp configmaps generate". $cmdArgs ."` on ". date('c') .".";
-        $phpContent = ConfigMapService::getMapAsPhp($newConfigMap, $header);
+        $header = "// Generated by `wp confmaps generate". $cmdArgs ."` on ". date('c') .".";
+        $phpContent = ConfMapService::getMapAsPhp($newConfMap, $header);
 
         // Output
         if (isset($assocArgs['output']) && ($assocArgs['output'] != '-')) {
             $filename = $assocArgs['output'];
             file_put_contents($filename, $phpContent);
-            WP_CLI::success("New config map stored in the following file: " . $filename);
+            WP_CLI::success("New conf map stored in the following file: " . $filename);
         } else {
             WP_CLI::line($phpContent);
         }
     }
 
     /**
-     * List all defined config maps
+     * List all defined conf maps
      *
      * ## OPTIONS
      *
@@ -161,45 +161,45 @@ More information is available at https://github.com/wp-cli-configmaps/wp-cli-con
      *
      * ## EXAMPLES
      *
-     * wp configmaps list
+     * wp confmaps list
      *
      * @synopsis
      */
     public function list ()
     {
-        $configMaps = ConfigMapService::getMapsMetadata();
+        $confMaps = ConfMapService::getMapsMetadata();
 
         $tableRows = [];
-        foreach ($configMaps as $mapId => $mapMetadata) {
+        foreach ($confMaps as $mapId => $mapMetadata) {
             $tableRows[] = [
-                'Config map ID' => $mapId,
-                'Source file path' => ConfigMapService::getPrintableFilePath($mapMetadata['file']),
+                'Conf map ID' => $mapId,
+                'Source file path' => ConfMapService::getPrintableFilePath($mapMetadata['file']),
             ];
         }
 
         if (count($tableRows) == 0) {
-            WP_CLI::error("There are no config maps defined");
+            WP_CLI::error("There are no conf maps defined");
         } else {
             WP_CLI\Utils\format_items('table', $tableRows, array_keys($tableRows[0]));
         }
     }
 
     /**
-     * Show the final merged config map (from all defined maps), or an individual config map
+     * Show the final merged conf map (from all defined maps), or an individual conf map
      *
      * ## OPTIONS
      *
      * [<map-id>]
-     * : Optional ID of an individual config map to show. When absent, a merged config map will be shown.
+     * : Optional ID of an individual conf map to show. When absent, a merged conf map will be shown.
      *
      * [--php]
-     * : Output the map as PHP code (suitable for updating your config map files)
+     * : Output the map as PHP code (suitable for updating your conf map files)
      *
      * ## EXAMPLES
      *
-     * wp configmaps show
-     * wp configmaps show common
-     * wp configmaps show common --php
+     * wp confmaps show
+     * wp confmaps show common
+     * wp confmaps show common --php
      *
      * @synopsis [<map-id>] [--php]
      */
@@ -208,28 +208,28 @@ More information is available at https://github.com/wp-cli-configmaps/wp-cli-con
         // Get the map
         if (isset($args[0])) {
             $mapId = $args[0];
-            if (!ConfigMapService::doesMapIdExist($mapId)) {
-                WP_CLI::error("Config map with id '$mapId' is not defined (hint: 'wp configmaps list' lists all defined config maps)");
+            if (!ConfMapService::doesMapIdExist($mapId)) {
+                WP_CLI::error("Conf map with id '$mapId' is not defined (hint: 'wp confmaps list' lists all defined conf maps)");
             }
-            $configMap = ConfigMapService::getMap($mapId);
+            $confMap = ConfMapService::getMap($mapId);
         } else {
-            $configMap = ConfigMapService::mergeDefinedMapSet();
+            $confMap = ConfMapService::mergeDefinedMapSet();
         }
 
         // Output
         if (isset($assocArgs['php'])) {
-            $outputText = ConfigMapService::getMapAsPhp($mapId);
+            $outputText = ConfMapService::getMapAsPhp($mapId);
             WP_CLI::line($outputText);
         } else {
 
             if (isset($mapId)) {
-                $tableRows = self::convertConfigMapToTableRows($configMap);
+                $tableRows = self::convertConfMapToTableRows($confMap);
             } else {
-                $tableRows = self::convertConfigMapToTableRows($configMap, "", true);
+                $tableRows = self::convertConfMapToTableRows($confMap, "", true);
             }
 
             if (count($tableRows) == 0) {
-                WP_CLI::error("Your config map is empty, which is odd. Use `wp configmaps list` and `wp configmaps show` to list and inspect your config maps");
+                WP_CLI::error("Your conf map is empty, which is odd. Use `wp confmaps list` and `wp confmaps show` to list and inspect your conf maps");
             }
 
             WP_CLI\Utils\format_items('table', $tableRows, array_keys($tableRows[0]));
@@ -239,11 +239,11 @@ More information is available at https://github.com/wp-cli-configmaps/wp-cli-con
     /**
      * Generate the actual display table content
      */
-    public static function convertConfigMapToTableRows($configMap, $parentOptionName="", $showSourceMapId=false)
+    public static function convertConfMapToTableRows($confMap, $parentOptionName="", $showSourceMapId=false)
     {
         $tableRows = [];
 
-        foreach ($configMap as $optionName => $optionSpec) {
+        foreach ($confMap as $optionName => $optionSpec) {
             $tableRow = [
                 'Option name' => $parentOptionName . $optionName,
                 'Type'        => $optionSpec['type'],
@@ -268,7 +268,7 @@ More information is available at https://github.com/wp-cli-configmaps/wp-cli-con
                 &&
                 (is_array($optionSpec['value']))
             ) {
-                $tableRowsForChildren = self::convertConfigMapToTableRows($optionSpec['value'], $parentOptionName . $optionName ." => ", $showSourceMapId);
+                $tableRowsForChildren = self::convertConfMapToTableRows($optionSpec['value'], $parentOptionName . $optionName ." => ", $showSourceMapId);
                 $tableRows = array_merge($tableRows, $tableRowsForChildren);
             }
         }
@@ -277,7 +277,7 @@ More information is available at https://github.com/wp-cli-configmaps/wp-cli-con
     }
 
     /**
-     * Verify consistency between config maps and database. Same as `configmaps apply --dry-run`, but sets exit status to `1` if inconsistencies (according to defined config maps) are found.
+     * Verify consistency between conf maps and database. Same as `confmaps apply --dry-run`, but sets exit status to `1` if inconsistencies (according to defined conf maps) are found.
      *
      * ## OPTIONS
      *
@@ -285,7 +285,7 @@ More information is available at https://github.com/wp-cli-configmaps/wp-cli-con
      *
      * ## EXAMPLES
      *
-     * wp configmaps verify
+     * wp confmaps verify
      *
      * @synopsis
      */
@@ -299,7 +299,7 @@ More information is available at https://github.com/wp-cli-configmaps/wp-cli-con
     }
 
     /**
-     * Apply defined config maps (after a merge) to the database's wp_options table
+     * Apply defined conf maps (after a merge) to the database's wp_options table
      *
      * ## OPTIONS
      *
@@ -311,9 +311,9 @@ More information is available at https://github.com/wp-cli-configmaps/wp-cli-con
      *
      * ## EXAMPLES
      *
-     * wp configmaps apply             # Does a --dry-run too
-     * wp configmaps apply --dry-run
-     * wp configmaps apply --commit    # Actually manipulates the database values
+     * wp confmaps apply             # Does a --dry-run too
+     * wp confmaps apply --dry-run
+     * wp confmaps apply --commit    # Actually manipulates the database values
      *
      * @synopsis [--commit] [--dry-run]
      */
@@ -325,11 +325,11 @@ More information is available at https://github.com/wp-cli-configmaps/wp-cli-con
             $dryRun = false;
         }
 
-        $mergedConfigMap = ConfigMapService::mergeDefinedMapSet();
-        $changedItems = ConfigMapService::applyMap($mergedConfigMap, $dryRun);
+        $mergedConfMap = ConfMapService::mergeDefinedMapSet();
+        $changedItems = ConfMapService::applyMap($mergedConfMap, $dryRun);
 
         if (count($changedItems) == 0) {
-            WP_CLI::success("Database table wp_options is already consistent with the defined config maps.");
+            WP_CLI::success("Database table wp_options is already consistent with the defined conf maps.");
         } else {
             WP_CLI::line("Change summary:");
             WP_CLI\Utils\format_items('table', $changedItems, array_keys($changedItems[0]));
@@ -345,7 +345,7 @@ More information is available at https://github.com/wp-cli-configmaps/wp-cli-con
     }
 
     /**
-     * Update defined config maps with values currently stored in the wp_options table. The item is updated in all active maps where it is defined. For updating an individual map, consult the `wp configmaps update --map=MY-MAP-ID` command.
+     * Update defined conf maps with values currently stored in the wp_options table. The item is updated in all active maps where it is defined. For updating an individual map, consult the `wp confmaps update --map=MY-MAP-ID` command.
      *
      * ## OPTIONS
      *
@@ -354,9 +354,9 @@ More information is available at https://github.com/wp-cli-configmaps/wp-cli-con
      *
      * ## EXAMPLES
      *
-     * wp configmaps update          # Update map files for all defined maps (add undefined top-level options to the first map)
-     * wp configmaps update common   # Update map file for map with called 'common' (ignore undefined top-level options)
-     * wp configmaps update dev      # Update map file for map with ID 'dev'
+     * wp confmaps update          # Update map files for all defined maps (add undefined top-level options to the first map)
+     * wp confmaps update common   # Update map file for map with called 'common' (ignore undefined top-level options)
+     * wp confmaps update dev      # Update map file for map with ID 'dev'
      *
      * @synopsis [<map-id>]
      */
@@ -364,37 +364,37 @@ More information is available at https://github.com/wp-cli-configmaps/wp-cli-con
     {
         if (isset($args[0])) {
             $mapId = $args[0];
-            if (!ConfigMapService::doesMapIdExist($mapId)) {
-                WP_CLI::error("Config map with id '$mapId' is not defined (hint: `wp configmaps list` to see all defined config maps)");
+            if (!ConfMapService::doesMapIdExist($mapId)) {
+                WP_CLI::error("Conf map with id '$mapId' is not defined (hint: `wp confmaps list` to see all defined conf maps)");
             }
-            $configMap = ConfigMapService::getMap($mapId);
-            $configMaps = [
-                $mapId => $configMap,
+            $confMap = ConfMapService::getMap($mapId);
+            $confMaps = [
+                $mapId => $confMap,
             ];
         } else {
-            $configMap = ConfigMapService::mergeDefinedMapSet();
-            $configMaps = ConfigMapService::getMaps();
+            $confMap = ConfMapService::mergeDefinedMapSet();
+            $confMaps = ConfMapService::getMaps();
         }
 
         // Get the current values from the DB
-        $currentWpOptionsValueMap = ConfigMapService::generateMapFromWpOptions();
+        $currentWpOptionsValueMap = ConfMapService::generateMapFromWpOptions();
 
-        // Loop through config maps that need to be updated
+        // Loop through conf maps that need to be updated
         $i = 0;
-        foreach ($configMaps as $mapId => $configMap) {
+        foreach ($confMaps as $mapId => $confMap) {
             $i++;
 
             $undefKeyAction = (isset($mapId) || ($i > 1) ? 'ignore' : 'add');
-            $updatedConfigMap = ConfigMapService::updateMapValues($configMap, $currentWpOptionsValueMap, $undefKeyAction);
+            $updatedConfMap = ConfMapService::updateMapValues($confMap, $currentWpOptionsValueMap, $undefKeyAction);
 
-            $header = "// Generated by `wp configmaps update` on ". date('c') .".";
-            ConfigMapService::updateMapFile($mapId, $updatedConfigMap, $header);
+            $header = "// Generated by `wp confmaps update` on ". date('c') .".";
+            ConfMapService::updateMapFile($mapId, $updatedConfMap, $header);
 
-            $mapFile = ConfigMapService::getMapFile($mapId);
-            WP_CLI::success("Config map refreshed: ". $mapId .", ". ConfigMapService::getPrintableFilePath($mapFile));
+            $mapFile = ConfMapService::getMapFile($mapId);
+            WP_CLI::success("Conf map refreshed: ". $mapId .", ". ConfMapService::getPrintableFilePath($mapFile));
         }
         if (!isset($assocArgs['map'])) {
-            WP_CLI::success("All defined config map files have been refreshed. Use `git diff` to see the changes.");
+            WP_CLI::success("All defined conf map files have been refreshed. Use `git diff` to see the changes.");
         }
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /*
- * ConfigMaps configuration management for WordPress WP-CLI - Tame your wp_options using WP-CLI and git
+ * ConfMaps configuration management for WordPress WP-CLI - Tame your wp_options using WP-CLI and git
  *
  * Copyright (C) 2022 Bostjan Skufca Jese
  *
@@ -18,5 +18,5 @@
  */
 
 if (defined('WP_CLI')) {
-    WP_CLI::add_command('configmaps', '\\WP\\CLI\\ConfigMaps\\Commands');
+    WP_CLI::add_command('confmaps', '\\WP\\CLI\\ConfMaps\\Commands');
 }

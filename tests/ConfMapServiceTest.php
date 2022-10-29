@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use WP\CLI\ConfigMaps\ConfigMapService;
+use WP\CLI\ConfMaps\ConfMapService;
 
-final class ConfigMapServiceTest extends TestCase
+final class ConfMapServiceTest extends TestCase
 {
 
     public function testOverride (): void
     {
-        $configMap1 = [
+        $confMap1 = [
             'metadata' => [
                 'version' => 1,
             ],
@@ -18,7 +18,7 @@ final class ConfigMapServiceTest extends TestCase
                 'var1' => 'val1',
             ],
         ];
-        $configMap2 = [
+        $confMap2 = [
             'metadata' => [
                 'version' => 1,
             ],
@@ -26,22 +26,22 @@ final class ConfigMapServiceTest extends TestCase
                 'var1' => 'val2',
             ],
         ];
-        $configMaps = [
-            'cm1' => $configMap1,
-            'cm2' => $configMap2,
+        $confMaps = [
+            'cm1' => $confMap1,
+            'cm2' => $confMap2,
         ];
-        ConfigMapService::setCustomMaps($configMaps);
+        ConfMapService::setCustomMaps($confMaps);
 
-        $configMapFinal = ConfigMapService::mergeDefinedMapSet();
+        $confMapFinal = ConfMapService::mergeDefinedMapSet();
 
-        $this->assertEquals($configMapFinal['var1']['value'], "val2");
+        $this->assertEquals($confMapFinal['var1']['value'], "val2");
     }
 
 
 
     public function testOverrideNested (): void
     {
-        $configMap1 = [
+        $confMap1 = [
             'metadata' => [
                 'version' => 1,
             ],
@@ -54,7 +54,7 @@ final class ConfigMapServiceTest extends TestCase
                 ],
             ],
         ];
-        $configMap2 = [
+        $confMap2 = [
             'metadata' => [
                 'version' => 1,
             ],
@@ -67,22 +67,22 @@ final class ConfigMapServiceTest extends TestCase
                 ],
             ],
         ];
-        $configMaps = [
-            'cm1' => $configMap1,
-            'cm2' => $configMap2,
+        $confMaps = [
+            'cm1' => $confMap1,
+            'cm2' => $confMap2,
         ];
-        ConfigMapService::setCustomMaps($configMaps);
+        ConfMapService::setCustomMaps($confMaps);
 
-        $configMapFinal = ConfigMapService::mergeDefinedMapSet();
+        $confMapFinal = ConfMapService::mergeDefinedMapSet();
 
-        $this->assertEquals($configMapFinal['l1']['value']['var1']['value'], "val2");
+        $this->assertEquals($confMapFinal['l1']['value']['var1']['value'], "val2");
     }
 
 
 
     public function testArrayMerge (): void
     {
-        $configMap1 = [
+        $confMap1 = [
             'metadata' => [
                 'version' => 1,
             ],
@@ -95,7 +95,7 @@ final class ConfigMapServiceTest extends TestCase
                 ],
             ],
         ];
-        $configMap2 = [
+        $confMap2 = [
             'metadata' => [
                 'version' => 1,
             ],
@@ -108,15 +108,15 @@ final class ConfigMapServiceTest extends TestCase
                 ],
             ],
         ];
-        $configMaps = [
-            'cm1' => $configMap1,
-            'cm2' => $configMap2,
+        $confMaps = [
+            'cm1' => $confMap1,
+            'cm2' => $confMap2,
         ];
-        ConfigMapService::setCustomMaps($configMaps);
+        ConfMapService::setCustomMaps($confMaps);
 
-        $configMapFinal = ConfigMapService::mergeDefinedMapSet();
+        $confMapFinal = ConfMapService::mergeDefinedMapSet();
 
-        $this->assertEquals($configMapFinal['l1']['value']['var1']['value'], "val1");
-        $this->assertEquals($configMapFinal['l1']['value']['var2']['value'], "val2");
+        $this->assertEquals($confMapFinal['l1']['value']['var1']['value'], "val1");
+        $this->assertEquals($confMapFinal['l1']['value']['var2']['value'], "val2");
     }
 }
