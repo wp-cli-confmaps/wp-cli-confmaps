@@ -2,6 +2,13 @@
 
 
 
+## 2022-10-30 - Release 1.0.6
+
+Improvements:
+- Add support for `object` (of `stdClass`) type values
+- Expand test coverage (to DB value parsing/writing)
+
+
 ## 2022-10-29 - Release 1.0.5
 
 Project renamed to `wp-cli-confmaps`.
