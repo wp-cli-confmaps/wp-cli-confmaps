@@ -38,7 +38,7 @@ class ConfMapService
     /**
      * What class to use to interface with wp_options storage
      */
-    protected static $wpOptionsIO = "WpOptionsIO\Db";
+    protected static $wpOptionsIO = "WP\CLI\ConfMaps\WpOptionsIO\Db";
 
     /**
      * Configure which wp_options IO interface to use
